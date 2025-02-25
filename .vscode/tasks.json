@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cargo",
+			"options": {
+				"cwd": "examples/treasure_hunter"
+			},
+			"command": "run",
+			"args": [],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"label": "rust: run example treasure_hunter"
+		}
+	]
+}

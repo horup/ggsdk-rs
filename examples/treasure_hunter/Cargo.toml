@@ -1,0 +1,14 @@
+cargo-features = ["codegen-backend"]
+
+[package]
+name = "treasure_hunter"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "treasure_hunter"
+
+[dependencies]
+gsdk = {path = "../.."}
+
+
