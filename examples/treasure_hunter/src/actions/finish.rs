@@ -11,7 +11,7 @@ impl Action for FinishAction {
             ctx.state.won = true;
             ctx.state.msg = "You Won!".to_string();
             ctx.state.current_level = String::default();
-            gsdk::persist::save("current_level", &ctx.state.current_level);
+            ggsdk::persist::save("current_level", &ctx.state.current_level);
             ctx.push_action(FadeAction {
                 dir:super::FadeDirection::Out
             });

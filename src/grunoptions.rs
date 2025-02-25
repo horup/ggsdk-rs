@@ -9,7 +9,7 @@ pub struct GRunOptions {
 impl Default for GRunOptions {
     fn default() -> Self {
         Self {
-            window_title: "GSDK App".to_string(),
+            window_title: "ggsdk App".to_string(),
             window_initial_pos:None,
             window_initial_active:None,
             window_initial_size: None,

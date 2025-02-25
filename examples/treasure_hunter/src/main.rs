@@ -5,7 +5,7 @@ pub use state::*;
 mod app;
 pub use app::*;
 pub mod actions;
-use gsdk::{GEngine, GRunOptions};
+use ggsdk::{GEngine, GRunOptions};
 
 
 fn main() {

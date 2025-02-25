@@ -1,4 +1,4 @@
-use gsdk::GAssets;
+use ggsdk::GAssets;
 
 use crate::State;
 

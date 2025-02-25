@@ -1712,7 +1712,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gsdk"
+name = "ggsdk"
 version = "0.1.0"
 dependencies = [
  "eframe",
@@ -3980,7 +3980,7 @@ dependencies = [
 name = "treasure_hunter"
 version = "0.1.0"
 dependencies = [
- "gsdk",
+ "ggsdk",
 ]
 
 [[package]]

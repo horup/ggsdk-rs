@@ -1,5 +1,5 @@
 use endlessgrid::Grid;
-use gsdk::{endlessgrid, tiled};
+use ggsdk::{endlessgrid, tiled};
 use crate::{Action, Cell, Thing, ThingVariant};
 
 use super::FadeAction;
@@ -96,6 +96,6 @@ impl Action for LoadMapAction {
         ctx.push_action(FadeAction {
             dir: super::FadeDirection::In,
         });
-        gsdk::persist::save("current_level", &ctx.state.current_level);
+        ggsdk::persist::save("current_level", &ctx.state.current_level);
     }
 }

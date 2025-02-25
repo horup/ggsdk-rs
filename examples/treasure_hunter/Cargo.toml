@@ -9,6 +9,6 @@ edition = "2024"
 name = "treasure_hunter"
 
 [dependencies]
-gsdk = {path = "../.."}
+ggsdk = {path = "../.."}
 
 

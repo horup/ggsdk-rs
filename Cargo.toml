@@ -2,12 +2,12 @@
 members = ["examples/treasure_hunter"]
 
 [package]
-name = "gsdk"
+name = "ggsdk"
 version = "0.1.0"
 edition = "2021"
 description = "A crate that exports several types related to game development"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/horup/gsdk-rs"
+repository = "https://github.com/horup/ggsdk-rs"
 
 [lib]
 crate-type = ["lib"]
