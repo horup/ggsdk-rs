@@ -53,9 +53,7 @@ impl GEngine {
 
     #[cfg(not(target_arch = "wasm32"))]
     pub fn run<T: GGame + 'static>(game: T, options: GRunOptions) {
-        tracing_subscriber::FmtSubscriber::builder()
-            .with_max_level(tracing_subscriber::filter::LevelFilter::DEBUG)
-            .init();
+        tracing_subscriber::fmt::init();
         let engine = Self::new(game);
         let size = options.window_initial_size.unwrap_or((640.0, 480.0));
         let eframe_options = eframe::NativeOptions {
