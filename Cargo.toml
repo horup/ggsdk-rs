@@ -5,6 +5,8 @@ members = ["examples/treasure_hunter"]
 name = "gsdk"
 version = "0.1.0"
 edition = "2021"
+description = "A crate that exports several types related to game development"
+license = "MIT or Apache 2.0"
 
 [lib]
 crate-type = ["lib"]
