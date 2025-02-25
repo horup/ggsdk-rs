@@ -1706,9 +1706,10 @@ checksum = "a3d8a32ae18130a3c84dd492d4215c3d913c3b07c6b63c2eb3eb7ff1101ab7bf"
 [[package]]
 name = "endlessgrid"
 version = "0.2.3"
-source = "git+https://github.com/horup/endlessgrid-rs.git#41ff5d9c591f77e45476affb9750b9ae9067e991"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2c5fb910c7640a8613612fd62ceb800e7d8fe41c75b4cfb0f47ec9bc21d961be"
 dependencies = [
- "glam 0.30.0",
+ "glam",
  "pathfinding",
  "serde",
 ]
@@ -2128,12 +2129,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "glam"
-version = "0.30.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17fcdf9683c406c2fc4d124afd29c0d595e22210d633cbdb8695ba9935ab1dc6"
-
-[[package]]
 name = "glob"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2299,7 +2294,7 @@ dependencies = [
  "endlessgrid",
  "futures",
  "getrandom 0.2.15",
- "glam 0.29.2",
+ "glam",
  "image",
  "js-sys",
  "kira",
@@ -2766,7 +2761,7 @@ checksum = "57141819f3e9a88d264e9b5d945c494d58b6ba4148ca7fc8261e8e7de84407ad"
 dependencies = [
  "atomic-arena",
  "cpal",
- "glam 0.29.2",
+ "glam",
  "mint",
  "paste",
  "rtrb",
