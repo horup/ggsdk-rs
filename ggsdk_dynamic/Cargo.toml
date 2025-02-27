@@ -2,6 +2,9 @@
 name = "ggsdk_dynamic"
 version = "0.1.2"
 edition = "2024"
+description = "A crate that exports several types related to game development"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/horup/ggsdk-rs"
 
 [lib]
 crate-type = ["dylib"]
