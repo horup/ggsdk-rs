@@ -7,7 +7,6 @@ pub use app::*;
 pub mod actions;
 use ggsdk::{GEngine, GRunOptions};
 
-
 fn main() {
     let size = 16.0;
     let cell_size = 8.0 * 4.0;
