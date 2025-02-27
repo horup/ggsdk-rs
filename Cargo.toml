@@ -3,7 +3,7 @@ members = ["ggsdk", "ggsdk_dynamic", "examples/treasure_hunter"]
 
 [package]
 name = "ggsdk"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "A crate that exports several types related to game development"
 license = "MIT OR Apache-2.0"
