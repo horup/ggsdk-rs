@@ -1,3 +1,3 @@
-cargo publish ggsdk_internal
-cargo publish ggsdk_dynamic
-cargo publish .
+cargo publish -p ggsdk_internal
+cargo publish -p ggsdk_dynamic
+cargo publish
