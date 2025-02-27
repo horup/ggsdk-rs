@@ -1,4 +1,4 @@
-cd ggsdk_interal
+cd ggsdk_internal
 cargo publish
 
 cd ..
