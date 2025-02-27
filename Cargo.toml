@@ -17,4 +17,4 @@ dynamic = ["ggsdk_dynamic"]
 
 [dependencies]
 sdk = { path = "ggsdk" }
-ggsdk_dynamic = { path = "ggsdk_dynamic", optional = true}
+ggsdk_dynamic = { path = "ggsdk_dynamic", optional = true, version = "0.1.0"}
