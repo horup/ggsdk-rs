@@ -1,2 +1,2 @@
 #[allow(unused_imports)]
-use sdk::*;
+use ggsdk_internal::*;

@@ -1,5 +1,5 @@
-pub use sdk::*;
+pub use ggsdk_internal::*;
 
 #[allow(unused_imports)]
 #[cfg(feature = "dynamic")]
-pub use dylib::*;
+pub use ggsdk_dynamic::*;
