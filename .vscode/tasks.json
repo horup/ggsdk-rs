@@ -7,7 +7,7 @@
 				"cwd": "examples/treasure_hunter"
 			},
 			"command": "run",
-			"args": [],
+			"args": ["--features", "ggsdk/dynamic"],
 			"problemMatcher": [
 				"$rustc"
 			],
