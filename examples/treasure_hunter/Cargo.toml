@@ -10,3 +10,4 @@ name = "treasure_hunter"
 
 [dependencies]
 ggsdk = {path = "../..", features = []}
+endlessgrid = "0.2.3"

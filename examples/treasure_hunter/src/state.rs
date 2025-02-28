@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use endlessgrid::Grid;
-use ggsdk::endlessgrid;
+use endlessgrid;
 
 use crate::Action;
 

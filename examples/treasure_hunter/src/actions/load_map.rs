@@ -1,6 +1,7 @@
 use endlessgrid::Grid;
-use ggsdk::{endlessgrid, tiled};
+use ggsdk::tiled;
 use crate::{Action, Cell, Thing, ThingVariant};
+use endlessgrid;
 
 use super::FadeAction;
 

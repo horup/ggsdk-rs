@@ -32,7 +32,6 @@ pub use gpainter::*;
 
 pub mod persist;
 
-pub use endlessgrid;
 pub use tracing_subscriber;
 pub use tiled;
 pub use kira;
