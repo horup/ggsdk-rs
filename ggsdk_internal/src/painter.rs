@@ -1,13 +1,13 @@
 use eframe::egui::{Color32, Painter, Rect};
 
-use crate::GAtlas;
+use crate::GGAtlas;
 
-pub trait GPainter {
-    fn atlas(&self, atlas: &GAtlas, index: u16, rect: Rect, color: Color32);
+pub trait GGPainter {
+    fn atlas(&self, atlas: &GGAtlas, index: u16, rect: Rect, color: Color32);
 }
 
-impl GPainter for Painter {
-    fn atlas(&self, atlas: &GAtlas, index: u16, rect: Rect, color: Color32) {
+impl GGPainter for Painter {
+    fn atlas(&self, atlas: &GGAtlas, index: u16, rect: Rect, color: Color32) {
         let sw: f32 = 1.0 / atlas.cols as f32;
         let sh = 1.0 / atlas.rows as f32;
         let col = index % atlas.cols as u16;

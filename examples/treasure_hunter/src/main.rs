@@ -5,12 +5,12 @@ pub use state::*;
 mod app;
 pub use app::*;
 pub mod actions;
-use ggsdk::{GEngine, GRunOptions};
+use ggsdk::{GGEngine, GGRunOptions};
 
 fn main() {
     let size = 16.0;
     let cell_size = 8.0 * 4.0;
-    GEngine::run(TreasureHunter::default(), GRunOptions {
+    GGEngine::run(TreasureHunter::default(), GGRunOptions {
         window_title: "Treasure Hunter".to_string(),
         window_initial_size: Some((size * cell_size, size * cell_size)),
         ..Default::default()

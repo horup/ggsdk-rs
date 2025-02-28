@@ -1,28 +1,28 @@
-use crate::{GAssets, GContext, GGame, GRunOptions};
+use crate::{GAssets, GGContext, GGApp, GGRunOptions};
 use eframe::egui::{self, Align2, Color32, FontId, LayerId};
 use kira::AudioManager;
 use web_time::Instant;
 
 #[derive(Clone, Copy)]
-pub enum GEngineState {
+pub enum GGEngineState {
     Preinit,
     Init,
     Postinit,
 }
 
-pub struct GEngine {
+pub struct GGEngine {
     pub(crate) assets: GAssets,
     pub(crate) rhai_engine: rhai::Engine,
     pub(crate) rhai_ast: rhai::AST,
     pub(crate) audio_manager: AudioManager,
     pub(crate) iterations: u64,
-    pub(crate) game: Box<dyn GGame>,
+    pub(crate) game: Box<dyn GGApp>,
     pub(crate) last_update: Instant,
-    pub(crate) state: GEngineState,
+    pub(crate) state: GGEngineState,
 }
 
-impl GEngine {
-    fn new<T: GGame + 'static>(game: T) -> Self {
+impl GGEngine {
+    fn new<T: GGApp + 'static>(game: T) -> Self {
         let rhai_engine = rhai::Engine::new();
         let mut engine = Self {
             assets: GAssets::default(),
@@ -33,7 +33,7 @@ impl GEngine {
             rhai_ast: Default::default(),
             audio_manager: AudioManager::new(Default::default())
                 .expect("failed to initialize audio manager"),
-            state: GEngineState::Preinit,
+            state: GGEngineState::Preinit,
         };
 
         engine.rhai_register_functions();
@@ -52,7 +52,7 @@ impl GEngine {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn run<T: GGame + 'static>(game: T, options: GRunOptions) {
+    pub fn run<T: GGApp + 'static>(game: T, options: GGRunOptions) {
         tracing_subscriber::fmt::init();
         let engine = Self::new(game);
         let size = options.window_initial_size.unwrap_or((640.0, 480.0));
@@ -79,7 +79,7 @@ impl GEngine {
     }
 
     #[cfg(target_arch = "wasm32")]
-    pub fn run<T: GGame + 'static>(game: T, options: GRunOptions) {
+    pub fn run<T: GGApp + 'static>(game: T, options: GGRunOptions) {
         tracing_subscriber::FmtSubscriber::builder()
             .with_max_level(tracing_subscriber::filter::LevelFilter::DEBUG)
             .without_time()
@@ -120,7 +120,7 @@ impl GEngine {
         let dt = now - self.last_update;
         let dt = dt.as_secs_f32();
 
-        let mut gctx = GContext {
+        let mut gctx = GGContext {
             egui_ctx,
             rhai_engine: &mut self.rhai_engine,
             rhai_ast: &self.rhai_ast,
@@ -131,7 +131,7 @@ impl GEngine {
         self.assets.poll(&mut gctx);
 
         match self.state {
-            GEngineState::Preinit => {
+            GGEngineState::Preinit => {
                 let painter =
                     egui_ctx.layer_painter(LayerId::new(egui::Order::Foreground, "preinit".into()));
                 let clip = painter.clip_rect();
@@ -159,12 +159,12 @@ impl GEngine {
                         // recreate audiomanager to ensure it works on the web
                         self.audio_manager = AudioManager::new(Default::default())
                             .expect("failed to initialize audio manager");
-                        self.state = GEngineState::Init;
+                        self.state = GGEngineState::Init;
                     }
                 });
             }
-            GEngineState::Init => {
-                let mut gctx = GContext {
+            GGEngineState::Init => {
+                let mut gctx = GGContext {
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -173,10 +173,10 @@ impl GEngine {
                     assets: &mut self.assets,
                 };
                 self.game.init(&mut gctx);
-                self.state = GEngineState::Postinit;
+                self.state = GGEngineState::Postinit;
             }
-            GEngineState::Postinit => {
-                let mut gctx = GContext {
+            GGEngineState::Postinit => {
+                let mut gctx = GGContext {
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -186,7 +186,7 @@ impl GEngine {
                 };
                 self.assets.poll(&mut gctx);
 
-                let mut gctx = GContext {
+                let mut gctx = GGContext {
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -208,7 +208,7 @@ impl GEngine {
     pub fn load_atlas(&self, _path: &str, _name: &str) {}
 }
 
-impl eframe::App for GEngine {
+impl eframe::App for GGEngine {
     fn update(&mut self, ctx: &eframe::egui::Context, _: &mut eframe::Frame) {
         self.update(ctx);
     }

@@ -1,7 +1,7 @@
 use rhai::CallFnOptions;
-use crate::GEngine;
+use crate::GGEngine;
 
-impl GEngine {
+impl GGEngine {
     pub(crate) fn rhai_register_functions(&mut self) {
        /* let scripts = self.scripts.clone();
         self.rhai_engine.register_fn("load_script", move |x: &str| {

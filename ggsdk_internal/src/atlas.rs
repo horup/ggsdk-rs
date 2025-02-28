@@ -1,14 +1,14 @@
 use eframe::egui::{ColorImage, Context, TextureHandle, TextureOptions};
 
 #[derive(Clone)]
-pub struct GAtlas {
+pub struct GGAtlas {
     pub texture:TextureHandle,
     pub cols:u8,
     pub rows:u8,
     pub name:String
 }
 
-impl GAtlas {
+impl GGAtlas {
     pub fn new(ctx: &Context, name:impl Into<String>, image_data: &[u8], cols:u8, rows:u8) -> Self {
         let name = name.into();
         let img = image::load_from_memory(image_data).unwrap();

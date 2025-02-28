@@ -1,5 +1,5 @@
 use ggsdk::{
-    egui::{self, Align2, Button, Color32, CornerRadius, FontId, LayerId, Margin, Rect, RichText}, kira, tiled, GAtlas, GContext, GGame, GPainter
+    egui::{self, Align2, Button, Color32, CornerRadius, FontId, LayerId, Margin, Rect, RichText}, kira, tiled, GGAtlas, GGContext, GGApp, GGPainter
 };
 use kira::sound::static_sound::StaticSoundData;
 use std::{cell::RefCell, rc::Rc};
@@ -18,13 +18,13 @@ pub struct TreasureHunter {
 }
 
 impl TreasureHunter {
-    pub fn initialize(&mut self, g: &mut ggsdk::GContext) {
+    pub fn initialize(&mut self, g: &mut ggsdk::GGContext) {
         if !self.initialized && g.assets.pending() == 0 {
             self.initialized = true;
         }
     }
 
-    pub fn process_game_input(&mut self, g: &mut ggsdk::GContext) {
+    pub fn process_game_input(&mut self, g: &mut ggsdk::GGContext) {
         let ctx = g.egui_ctx;
         ctx.input(|input| {
             if input.key_pressed(egui::Key::Escape) {
@@ -125,7 +125,7 @@ impl TreasureHunter {
         self.state.borrow_mut().actions.push(Box::new(intent));
     }
 
-    fn process_actions(&mut self, g: &mut GContext) {
+    fn process_actions(&mut self, g: &mut GGContext) {
         let mut ctx = ActionContext {
             state: &mut self.state.borrow_mut(),
             new_actions: Vec::default(),
@@ -140,7 +140,7 @@ impl TreasureHunter {
         }
     }
 
-    fn play_sounds(&mut self, g: &mut ggsdk::GContext) {
+    fn play_sounds(&mut self, g: &mut ggsdk::GGContext) {
         for sound in self.state.borrow_mut().play_sound.drain(..) {
             let Some(sound) = g.assets.get::<StaticSoundData>(&sound) else {
                 continue;
@@ -149,7 +149,7 @@ impl TreasureHunter {
         }
     }
 
-    fn draw_game(&self, g: &ggsdk::GContext) {
+    fn draw_game(&self, g: &ggsdk::GGContext) {
         let painter = g.egui_ctx.layer_painter(LayerId::background());
         let rect = painter.clip_rect();
 
@@ -178,7 +178,7 @@ impl TreasureHunter {
         // draw void
         painter.rect_filled(rect, CornerRadius::ZERO, Color32::DARK_GRAY);
 
-        let Some(atlas) = g.assets.get::<GAtlas>("basic") else {
+        let Some(atlas) = g.assets.get::<GGAtlas>("basic") else {
             return;
         };
         let atlas = &atlas.data;
@@ -250,7 +250,7 @@ impl TreasureHunter {
       
     }
 
-    pub fn update_ui(&mut self, g: &mut ggsdk::GContext) {
+    pub fn update_ui(&mut self, g: &mut ggsdk::GGContext) {
         let show_menu = self.state.borrow().show_menu;
         self.process_game_input(g);
         self.process_actions(g);
@@ -310,13 +310,13 @@ impl TreasureHunter {
     }
 }
 
-impl GGame for TreasureHunter {
-    fn init(&mut self, g: &mut ggsdk::GContext) {
+impl GGApp for TreasureHunter {
+    fn init(&mut self, g: &mut ggsdk::GGContext) {
         let font = FontId::monospace(32.0);
         self.font = font;
         let font = FontId::monospace(16.0);
         self.font2 = font;
-        g.assets.load::<GAtlas>("assets/basic_32x32.png", "basic");
+        g.assets.load::<GGAtlas>("assets/basic_32x32.png", "basic");
         for i in 1..=9 {
             let i = i.to_string();
             g.assets.load::<tiled::Map>(&format!("assets/maps/lvl0{i}.tmx"), &format!("lvl0{i}"));
@@ -329,7 +329,7 @@ impl GGame for TreasureHunter {
         state.current_level = ggsdk::persist::load::<String>("current_level").unwrap_or_default();
     }
 
-    fn update(&mut self, g: &mut ggsdk::GContext) {
+    fn update(&mut self, g: &mut ggsdk::GGContext) {
         self.initialize(g);
         self.update_ui(g);
     }

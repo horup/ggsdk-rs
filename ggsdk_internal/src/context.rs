@@ -3,7 +3,7 @@ use rhai::CallFnOptions;
 use tracing::warn;
 use crate::GAssets;
 
-pub struct GContext<'a> {
+pub struct GGContext<'a> {
     pub assets: &'a mut GAssets,
     pub egui_ctx: &'a egui::Context,
     pub rhai_engine: &'a mut rhai::Engine,
@@ -12,7 +12,7 @@ pub struct GContext<'a> {
     pub dt:f32,
 }
 
-impl GContext<'_> {
+impl GGContext<'_> {
     pub fn call_function<T : Clone + 'static>(&self, name: &str, args: impl rhai::FuncArgs) -> Result<T, String>  {
         let res = self.rhai_engine.call_fn_with_options::<T>(
             CallFnOptions::new().eval_ast(false),

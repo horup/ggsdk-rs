@@ -7,28 +7,28 @@ pub use matchbox_socket;
 
 pub use glam;
 
-mod gcontext;
-pub use gcontext::*;
+mod context;
+pub use context::*;
 
-mod gengine;
-pub use gengine::*;
+mod engine;
+pub use engine::*;
 
-mod gassets;
-pub use gassets::*;
+mod assets;
+pub use assets::*;
 
-mod ggame;
-pub use ggame::*;
+mod game;
+pub use game::*;
 
-mod grunoptions;
-pub use grunoptions::*;
+mod runoptions;
+pub use runoptions::*;
 
-mod gengine_rhai;
+mod engine_rhai;
 
-mod gatlas;
-pub use gatlas::*;
+mod atlas;
+pub use atlas::*;
 
-mod gpainter;
-pub use gpainter::*;
+mod painter;
+pub use painter::*;
 
 pub mod persist;
 

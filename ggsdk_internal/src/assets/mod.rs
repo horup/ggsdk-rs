@@ -14,16 +14,16 @@ pub use web_loader::*;
 
 use std::{any::{Any, TypeId}, collections::HashMap, io::Cursor, ops::{Deref, DerefMut}, path::Path, rc::Rc, str::from_utf8};
 
-use crate::{GAtlas, GContext};
+use crate::{GGAtlas, GGContext};
 
 #[derive(Clone)]
-pub struct GAsset<T> {
+pub struct GGAsset<T> {
     pub name: String,
     pub path: String,
     pub data: T,
 }
 
-impl<T> Deref for GAsset<T> {
+impl<T> Deref for GGAsset<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -31,19 +31,19 @@ impl<T> Deref for GAsset<T> {
     }
 }
 
-impl<T> DerefMut for GAsset<T> {
+impl<T> DerefMut for GGAsset<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.data
     }
 }
 
 pub enum AssetEvent<T> {
-    Loaded(Rc<GAsset<T>>),
+    Loaded(Rc<GGAsset<T>>),
     LoadFailed { name: String, path: String },
 }
 
 pub struct TypedAssets<T> {
-    loaded: HashMap<String, Rc<GAsset<T>>>,
+    loaded: HashMap<String, Rc<GGAsset<T>>>,
     pending: HashMap<String, String>,
     loader: Box<dyn Loader>,
 }
@@ -71,7 +71,7 @@ impl<T : 'static> TypedAssets<T> {
         self.loader.request(path.into());
     }
    
-    pub fn get(&self, name: &str) -> Option<Rc<GAsset<T>>> {
+    pub fn get(&self, name: &str) -> Option<Rc<GGAsset<T>>> {
         self.loaded.get(name).cloned()
     }
     pub fn poll<F>(&mut self, f: F) -> Option<AssetEvent<T>>
@@ -83,7 +83,7 @@ impl<T : 'static> TypedAssets<T> {
                 LoaderEvent::Load(path, vec) => match self.pending.remove(&path) {
                     Some(name) => match f(Load { name: name.clone(), path: path.clone(), data: vec }) {
                         Ok(t) => {
-                            let asset = Rc::new(GAsset {
+                            let asset = Rc::new(GGAsset {
                                 name: name.clone(),
                                 path,
                                 data: t,
@@ -128,13 +128,13 @@ pub struct GAssets {
 }
 
 pub trait AssetLoader {
-    fn poll(&mut self, g:&mut GContext) -> bool;
+    fn poll(&mut self, g:&mut GGContext) -> bool;
     fn to_any_mut(&mut self) -> &mut dyn std::any::Any;
     fn to_any_ref(&self) -> &dyn std::any::Any;
 }
 
 impl AssetLoader for TypedAssets<String> {
-    fn poll(&mut self, _:&mut GContext) -> bool {
+    fn poll(&mut self, _:&mut GGContext) -> bool {
         self.poll(|l| match from_utf8(&l.data) {
             Ok(ok) => Ok(ok.to_string()),
             Err(_) => Err(()),
@@ -168,7 +168,7 @@ impl tiled::ResourceReader for TiledMapReader {
 }
 
 impl AssetLoader for TypedAssets<tiled::Map> {
-    fn poll(&mut self, _:&mut GContext) -> bool {
+    fn poll(&mut self, _:&mut GGContext) -> bool {
         self.poll(|load|{
             let data = load.data.clone();
             let reader = TiledMapReader { data };
@@ -191,8 +191,8 @@ impl AssetLoader for TypedAssets<tiled::Map> {
     }
 }
 
-impl AssetLoader for TypedAssets<GAtlas> {
-    fn poll(&mut self, g:&mut GContext) -> bool {
+impl AssetLoader for TypedAssets<GGAtlas> {
+    fn poll(&mut self, g:&mut GGContext) -> bool {
         self.poll(|load|{
             let path = Path::new(&load.path);
             let file_name = path.file_stem().unwrap_or_default();
@@ -211,7 +211,7 @@ impl AssetLoader for TypedAssets<GAtlas> {
                     }
                 }
             }
-            Ok(GAtlas::new(g.egui_ctx, load.name, &load.data, cols, rows))
+            Ok(GGAtlas::new(g.egui_ctx, load.name, &load.data, cols, rows))
         }).is_some()
     }
 
@@ -225,7 +225,7 @@ impl AssetLoader for TypedAssets<GAtlas> {
 }
 
 impl AssetLoader for TypedAssets<StaticSoundData> {
-    fn poll(&mut self, _:&mut GContext) -> bool {
+    fn poll(&mut self, _:&mut GGContext) -> bool {
         self.poll(|load| {
             let data = load.data.clone();
             let cursor = std::io::Cursor::new(data);
@@ -270,7 +270,7 @@ impl GAssets {
         self.total += 1;
     }
 
-    pub fn get<T: 'static + Clone>(&self, name: &str) -> Option<Rc<GAsset<T>>> {
+    pub fn get<T: 'static + Clone>(&self, name: &str) -> Option<Rc<GGAsset<T>>> {
         let assets = self.assets.get(&TypeId::of::<T>());
         let Some(assets) = assets else {
             return None;
@@ -281,7 +281,7 @@ impl GAssets {
         assets.get(name)
     }
 
-    pub fn poll(&mut self, g:&mut GContext) {
+    pub fn poll(&mut self, g:&mut GGContext) {
         for assets in self.assets.values_mut() {
             if assets.poll(g) {
                 self.pending -= 1;
