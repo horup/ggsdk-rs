@@ -16,18 +16,18 @@ pub struct GGEngine {
     pub(crate) rhai_ast: rhai::AST,
     pub(crate) audio_manager: AudioManager,
     pub(crate) iterations: u64,
-    pub(crate) game: Box<dyn GGApp>,
+    pub(crate) app: Box<dyn GGApp>,
     pub(crate) last_update: Instant,
     pub(crate) state: GGEngineState,
 }
 
 impl GGEngine {
-    fn new<T: GGApp + 'static>(game: T) -> Self {
+    fn new<T: GGApp + 'static>(app: T) -> Self {
         let rhai_engine = rhai::Engine::new();
         let mut engine = Self {
             assets: GAssets::default(),
             last_update: Instant::now(),
-            game: Box::new(game),
+            app: Box::new(app),
             iterations: 0,
             rhai_engine,
             rhai_ast: Default::default(),
@@ -52,9 +52,9 @@ impl GGEngine {
     }
 
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn run<T: GGApp + 'static>(game: T, options: GGRunOptions) {
+    pub fn run<T: GGApp + 'static>(app: T, options: GGRunOptions) {
         tracing_subscriber::fmt::init();
-        let engine = Self::new(game);
+        let engine = Self::new(app);
         let size = options.window_initial_size.unwrap_or((640.0, 480.0));
         let eframe_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default().with_inner_size([size.0, size.1]),
@@ -172,7 +172,7 @@ impl GGEngine {
                     dt,
                     assets: &mut self.assets,
                 };
-                self.game.init(&mut gctx);
+                self.app.init(&mut gctx);
                 self.state = GGEngineState::Postinit;
             }
             GGEngineState::Postinit => {
@@ -194,7 +194,7 @@ impl GGEngine {
                     dt,
                     assets: &mut self.assets,
                 };
-                self.game.update(&mut gctx);
+                self.app.update(&mut gctx);
             }
         }
 

@@ -16,8 +16,8 @@ pub use engine::*;
 mod assets;
 pub use assets::*;
 
-mod game;
-pub use game::*;
+mod app;
+pub use app::*;
 
 mod runoptions;
 pub use runoptions::*;
