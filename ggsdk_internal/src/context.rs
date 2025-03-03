@@ -1,9 +1,10 @@
-use eframe::egui;
+use eframe::{egui, glow};
 use rhai::CallFnOptions;
 use tracing::warn;
 use crate::GAssets;
 
 pub struct GGContext<'a> {
+    pub gl:&'a glow::Context,
     pub assets: &'a mut GAssets,
     pub egui_ctx: &'a egui::Context,
     pub rhai_engine: &'a mut rhai::Engine,

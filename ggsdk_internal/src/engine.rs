@@ -1,5 +1,5 @@
 use crate::{GAssets, GGContext, GGApp, GGRunOptions};
-use eframe::egui::{self, Align2, Color32, FontId, LayerId};
+use eframe::{egui::{self, Align2, Color32, FontId, LayerId}, glow};
 use kira::AudioManager;
 use web_time::Instant;
 
@@ -115,12 +115,13 @@ impl GGEngine {
         });
     }
 
-    pub fn update(&mut self, egui_ctx: &egui::Context) {
+    pub fn update(&mut self, egui_ctx: &egui::Context, gl:&glow::Context) {
         let now = web_time::Instant::now();
         let dt = now - self.last_update;
         let dt = dt.as_secs_f32();
 
         let mut gctx = GGContext {
+            gl,
             egui_ctx,
             rhai_engine: &mut self.rhai_engine,
             rhai_ast: &self.rhai_ast,
@@ -165,6 +166,7 @@ impl GGEngine {
             }
             GGEngineState::Init => {
                 let mut gctx = GGContext {
+                    gl,
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -177,6 +179,7 @@ impl GGEngine {
             }
             GGEngineState::Postinit => {
                 let mut gctx = GGContext {
+                    gl,
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -187,6 +190,7 @@ impl GGEngine {
                 self.assets.poll(&mut gctx);
 
                 let mut gctx = GGContext {
+                    gl,
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -209,7 +213,8 @@ impl GGEngine {
 }
 
 impl eframe::App for GGEngine {
-    fn update(&mut self, ctx: &eframe::egui::Context, _: &mut eframe::Frame) {
-        self.update(ctx);
+    fn update(&mut self, ctx: &eframe::egui::Context, f: &mut eframe::Frame) {
+        let gl = f.gl().expect("unable to get gl");
+        self.update(ctx, gl);
     }
 }
