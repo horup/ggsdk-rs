@@ -12,6 +12,18 @@
 				"$rustc"
 			],
 			"label": "rust: run example treasure_hunter"
+		},
+		{
+			"type": "cargo",
+			"options": {
+				"cwd": "examples/gl"
+			},
+			"command": "run",
+			"args": ["--features", "ggsdk/dynamic"],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"label": "rust: run example gl"
 		}
 	]
 }

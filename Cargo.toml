@@ -1,5 +1,5 @@
 [workspace]
-members = ["ggsdk_internal", "ggsdk_dynamic", "examples/treasure_hunter"]
+members = ["ggsdk_internal", "ggsdk_dynamic", "examples/treasure_hunter", "examples/gl"]
 
 [package]
 name = "ggsdk"
