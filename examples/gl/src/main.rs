@@ -33,15 +33,21 @@ impl ggsdk::GGApp for App {
         };
         let (vertex_shader_source, fragment_shader_source) = (
             r#"
-                const vec2 verts[3] = vec2[3](
-                    vec2(0.0, 1.0),
+                const vec2 verts[6] = vec2[6](
+                    vec2(-1.0, 1.0),
                     vec2(-1.0, -1.0),
-                    vec2(1.0, -1.0)
+                    vec2(1.0, -1.0),
+                    vec2(1.0, -1.0),
+                    vec2(1.0, 1.0),
+                    vec2(-1.0, 1.0)
                 );
-                const vec4 colors[3] = vec4[3](
-                    vec4(1.0, 0.0, 0.0, 1.0),
-                    vec4(0.0, 1.0, 0.0, 1.0),
-                    vec4(0.0, 0.0, 1.0, 1.0)
+                const vec4 colors[6] = vec4[6](
+                    vec4(1.0, 1.0, 1.0, 1.0),
+                    vec4(1.0, 1.0, 1.0, 1.0),
+                    vec4(1.0, 1.0, 1.0, 1.0),
+                    vec4(1.0, 1.0, 1.0, 1.0),
+                    vec4(1.0, 1.0, 1.0, 1.0),
+                    vec4(1.0, 1.0, 1.0, 1.0)
                 );
                 out vec4 v_color;
                 uniform float u_angle;
@@ -115,7 +121,7 @@ impl ggsdk::GGApp for App {
                         state.angle,
                     );
                     gl.bind_vertex_array(Some(state.vertex_array));
-                    gl.draw_arrays(glow::TRIANGLES, 0, 3);
+                    gl.draw_arrays(glow::TRIANGLES, 0, 6);
                 };
             })),
         };
