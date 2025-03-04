@@ -3,8 +3,10 @@ use std::sync::RwLock;
 
 use ggsdk::egui;
 use ggsdk::egui::LayerId;
+use ggsdk::egui::TextureHandle;
 use ggsdk::glow;
 use ggsdk::glow::HasContext as _;
+use ggsdk::GGAtlas;
 
 
 struct State {
@@ -26,6 +28,8 @@ impl Default for App {
 
 impl ggsdk::GGApp for App {
     fn init(&mut self, g: &mut ggsdk::GGContext) {
+
+        g.assets.load::<GGAtlas>("smilie_1x1.png", "smilie");
         let shader_version = if cfg!(target_arch = "wasm32") {
             "#version 300 es"
         } else {
@@ -92,7 +96,6 @@ impl ggsdk::GGApp for App {
                     shader
                 })
                 .collect();
-
             gl.link_program(program);
 
             let vertex_array = gl.create_vertex_array().expect("failed to create");
@@ -106,6 +109,7 @@ impl ggsdk::GGApp for App {
     }
 
     fn update(&mut self, g: &mut ggsdk::GGContext) {
+        let smilie_atlas = g.assets.get::<GGAtlas>("smilie");
         let screen_rect = g.egui_ctx.screen_rect();
         let state = self.state.clone();
         let callback = egui::PaintCallback {

@@ -1,5 +1,4 @@
 use eframe::egui::{ColorImage, Context, TextureHandle, TextureOptions};
-
 #[derive(Clone)]
 pub struct GGAtlas {
     pub texture:TextureHandle,
@@ -25,4 +24,6 @@ impl GGAtlas {
             rows
         }
     }
+
+    
 }
