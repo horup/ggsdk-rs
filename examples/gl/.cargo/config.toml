@@ -1,0 +1,17 @@
+[unstable]
+codegen-backend = true
+
+[profile.dev]
+#codegen-backend = "cranelift"
+opt-level = 1
+debug = 0
+
+[profile.dev.package."*"]
+opt-level = 3
+debug = 0
+
+[target.x86_64-pc-windows-msvc]
+linker = "lld-link.exe"
+
+
+
