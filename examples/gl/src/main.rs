@@ -1,10 +1,8 @@
-use std::cell::RefCell;
 use std::sync::Arc;
 use std::sync::RwLock;
 
 use ggsdk::egui;
 use ggsdk::egui::LayerId;
-use ggsdk::egui_glow;
 use ggsdk::glow;
 use ggsdk::glow::HasContext as _;
 
@@ -71,7 +69,7 @@ impl ggsdk::GGApp for App {
         unsafe {
             let gl = g.gl;
             let program = gl.create_program().expect("Cannot create program");
-            let shaders: Vec<_> = shader_sources
+            let _: Vec<_> = shader_sources
                 .iter()
                 .map(|(shader_type, shader_source)| {
                     let shader = gl
