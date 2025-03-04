@@ -1,4 +1,4 @@
-use eframe::egui::{ColorImage, Context, TextureHandle, TextureOptions};
+use eframe::egui::{ColorImage, Context, TextureHandle, TextureId, TextureOptions};
 #[derive(Clone)]
 pub struct GGAtlas {
     pub texture:TextureHandle,
@@ -24,6 +24,8 @@ impl GGAtlas {
             rows
         }
     }
-
     
+    pub fn texture_id(&self) -> TextureId {
+        self.texture.id()
+    }
 }

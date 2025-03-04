@@ -53,20 +53,32 @@ impl ggsdk::GGApp for App {
                     vec4(1.0, 1.0, 1.0, 1.0),
                     vec4(1.0, 1.0, 1.0, 1.0)
                 );
+                const vec2 tex[6] = vec2[6](
+                    vec2(0.0, 1.0),
+                    vec2(0.0, -1.0),
+                    vec2(1.0, -1.0),
+                    vec2(1.0, -1.0),
+                    vec2(1.0, 1.0),
+                    vec2(-1.0, 1.0)
+                );
                 out vec4 v_color;
+                out vec2 TexCoord;
                 uniform float u_angle;
                 void main() {
                     v_color = colors[gl_VertexID];
                     gl_Position = vec4(verts[gl_VertexID], 0.0, 1.0);
                     gl_Position.x *= cos(u_angle);
+                    TexCoord = tex[gl_VertexID];
                 }
             "#,
             r#"
                 precision mediump float;
                 in vec4 v_color;
+                in vec2 TexCoord;
                 out vec4 out_color;
+                uniform sampler2D ourTexture;
                 void main() {
-                    out_color = v_color;
+                    out_color = v_color *  texture(ourTexture, TexCoord);
                 }
             "#,
         );
@@ -109,7 +121,12 @@ impl ggsdk::GGApp for App {
     }
 
     fn update(&mut self, g: &mut ggsdk::GGContext) {
-        let smilie_atlas = g.assets.get::<GGAtlas>("smilie");
+        if g.assets.pending() != 0 {
+            return;
+        }
+
+        let smilie_atlas = g.assets.get::<GGAtlas>("smilie").unwrap().texture_id();
+        
         let screen_rect = g.egui_ctx.screen_rect();
         let state = self.state.clone();
         let callback = egui::PaintCallback {
@@ -119,7 +136,9 @@ impl ggsdk::GGApp for App {
                 let state = state.read().unwrap();
                 let state = state.as_ref().unwrap();
                 unsafe { 
+                    let texture = painter.texture(smilie_atlas).unwrap();
                     gl.use_program(Some(state.program.clone())); 
+                    gl.bind_texture(glow::TEXTURE_2D, Some(texture));
                     gl.uniform_1_f32(
                         gl.get_uniform_location(state.program, "u_angle").as_ref(),
                         state.angle,
