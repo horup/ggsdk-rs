@@ -54,12 +54,12 @@ impl ggsdk::GGApp for App {
                     vec4(1.0, 1.0, 1.0, 1.0)
                 );
                 const vec2 tex[6] = vec2[6](
+                    vec2(0.0, 0.0),
                     vec2(0.0, 1.0),
-                    vec2(0.0, -1.0),
-                    vec2(1.0, -1.0),
-                    vec2(1.0, -1.0),
                     vec2(1.0, 1.0),
-                    vec2(-1.0, 1.0)
+                    vec2(1.0, 1.0),
+                    vec2(1.0, 0.0),
+                    vec2(0.0, 0.0)
                 );
                 out vec4 v_color;
                 out vec2 TexCoord;
