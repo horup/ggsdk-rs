@@ -27,7 +27,7 @@ impl Default for App {
 }
 
 impl ggsdk::GGApp for App {
-    fn init(&mut self, g: &mut ggsdk::GGContext) {
+    fn init(&mut self, g: &mut ggsdk::InitContext) {
 
         g.assets.load::<GGAtlas>("smilie_1x1.png", "smilie");
         let shader_version = if cfg!(target_arch = "wasm32") {

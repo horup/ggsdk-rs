@@ -1,4 +1,4 @@
-use crate::{GAssets, GGContext, GGApp, GGRunOptions};
+use crate::{GAssets, GGApp, GGContext, GGRunOptions, InitContext};
 use eframe::{egui::{self, Align2, Color32, FontId, LayerId}, glow};
 use kira::AudioManager;
 use web_time::Instant;
@@ -165,14 +165,9 @@ impl GGEngine {
                 });
             }
             GGEngineState::Init => {
-                let mut gctx = GGContext {
-                    gl,
-                    egui_ctx,
-                    rhai_engine: &mut self.rhai_engine,
-                    rhai_ast: &self.rhai_ast,
-                    audio_manager: &mut self.audio_manager,
-                    dt,
+                let mut gctx = InitContext {
                     assets: &mut self.assets,
+                    gl,
                 };
                 self.app.init(&mut gctx);
                 self.state = GGEngineState::Postinit;

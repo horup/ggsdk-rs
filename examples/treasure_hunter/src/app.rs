@@ -311,7 +311,7 @@ impl TreasureHunter {
 }
 
 impl GGApp for TreasureHunter {
-    fn init(&mut self, g: &mut ggsdk::GGContext) {
+    fn init(&mut self, g: &mut ggsdk::InitContext) {
         let font = FontId::monospace(32.0);
         self.font = font;
         let font = FontId::monospace(16.0);
@@ -330,7 +330,7 @@ impl GGApp for TreasureHunter {
     }
 
     fn update(&mut self, g: &mut ggsdk::GGContext) {
-        self.initialize(g);
+        self.initialize(g); 
         self.update_ui(g);
     }
 }
