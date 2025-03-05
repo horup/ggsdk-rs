@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use crate::{GAssets, GGApp, GGContext, GGRunOptions, InitContext};
 use eframe::{egui::{self, Align2, Color32, FontId, LayerId}, glow};
 use kira::AudioManager;
@@ -16,7 +18,7 @@ pub struct GGEngine {
     pub(crate) rhai_ast: rhai::AST,
     pub(crate) audio_manager: AudioManager,
     pub(crate) iterations: u64,
-    pub(crate) app: Box<dyn GGApp>,
+    pub(crate) app: Arc<Mutex<dyn GGApp>>,
     pub(crate) last_update: Instant,
     pub(crate) state: GGEngineState,
 }
@@ -27,7 +29,7 @@ impl GGEngine {
         let mut engine = Self {
             assets: GAssets::default(),
             last_update: Instant::now(),
-            app: Box::new(app),
+            app: Arc::new(Mutex::new(app)),
             iterations: 0,
             rhai_engine,
             rhai_ast: Default::default(),
@@ -169,7 +171,7 @@ impl GGEngine {
                     assets: &mut self.assets,
                     gl,
                 };
-                self.app.init(&mut gctx);
+                self.app.lock().unwrap().init(&mut gctx);
                 self.state = GGEngineState::Postinit;
             }
             GGEngineState::Postinit => {
@@ -193,7 +195,7 @@ impl GGEngine {
                     dt,
                     assets: &mut self.assets,
                 };
-                self.app.update(&mut gctx);
+                self.app.lock().unwrap().update(&mut gctx);
             }
         }
 
