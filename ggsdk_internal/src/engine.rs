@@ -232,7 +232,6 @@ impl GGEngine {
     }
 
     pub fn load_script(&self, _path: &str) {}
-
     pub fn load_atlas(&self, _path: &str, _name: &str) {}
 }
 
