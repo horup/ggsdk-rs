@@ -1,4 +1,5 @@
 mod loader;
+use eframe::egui;
 use kira::sound::static_sound::StaticSoundData;
 pub use loader::*;
 
@@ -14,7 +15,7 @@ pub use web_loader::*;
 
 use std::{any::{Any, TypeId}, collections::HashMap, io::Cursor, ops::{Deref, DerefMut}, path::Path, rc::Rc, str::from_utf8};
 
-use crate::{GGAtlas, GGContext};
+use crate::GGAtlas;
 
 #[derive(Clone)]
 pub struct GGAsset<T> {
@@ -127,14 +128,18 @@ pub struct GAssets {
     pending: usize,
 }
 
+pub struct PollContext<'a> {
+    pub egui_ctx:&'a egui::Context
+}
+
 pub trait AssetLoader {
-    fn poll(&mut self, g:&mut GGContext) -> bool;
+    fn poll(&mut self, g:&mut PollContext) -> bool;
     fn to_any_mut(&mut self) -> &mut dyn std::any::Any;
     fn to_any_ref(&self) -> &dyn std::any::Any;
 }
 
 impl AssetLoader for TypedAssets<String> {
-    fn poll(&mut self, _:&mut GGContext) -> bool {
+    fn poll(&mut self, _:&mut PollContext) -> bool {
         self.poll(|l| match from_utf8(&l.data) {
             Ok(ok) => Ok(ok.to_string()),
             Err(_) => Err(()),
@@ -168,7 +173,7 @@ impl tiled::ResourceReader for TiledMapReader {
 }
 
 impl AssetLoader for TypedAssets<tiled::Map> {
-    fn poll(&mut self, _:&mut GGContext) -> bool {
+    fn poll(&mut self, _:&mut PollContext) -> bool {
         self.poll(|load|{
             let data = load.data.clone();
             let reader = TiledMapReader { data };
@@ -192,7 +197,7 @@ impl AssetLoader for TypedAssets<tiled::Map> {
 }
 
 impl AssetLoader for TypedAssets<GGAtlas> {
-    fn poll(&mut self, g:&mut GGContext) -> bool {
+    fn poll(&mut self, g:&mut PollContext) -> bool {
         self.poll(|load|{
             let path = Path::new(&load.path);
             let file_name = path.file_stem().unwrap_or_default();
@@ -225,7 +230,7 @@ impl AssetLoader for TypedAssets<GGAtlas> {
 }
 
 impl AssetLoader for TypedAssets<StaticSoundData> {
-    fn poll(&mut self, _:&mut GGContext) -> bool {
+    fn poll(&mut self, _:&mut PollContext) -> bool {
         self.poll(|load| {
             let data = load.data.clone();
             let cursor = std::io::Cursor::new(data);
@@ -281,9 +286,9 @@ impl GAssets {
         assets.get(name)
     }
 
-    pub fn poll(&mut self, g:&mut GGContext) {
+    pub fn poll(&mut self, mut g:PollContext) {
         for assets in self.assets.values_mut() {
-            if assets.poll(g) {
+            if assets.poll(&mut g) {
                 self.pending -= 1;
             }
         }

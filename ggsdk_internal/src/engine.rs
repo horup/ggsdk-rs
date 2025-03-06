@@ -3,7 +3,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use crate::{GAssets, GGApp, GGContext, GGRunOptions, InitContext};
+use crate::{GAssets, GGApp, GGRunOptions, InitContext};
 use eframe::{
     egui::{self, Align2, Color32, FontId, LayerId},
     egui_glow, glow,
@@ -153,16 +153,7 @@ impl GGEngine {
         let dt = now - self.last_update;
         let dt = dt.as_secs_f32();
 
-        let mut gctx = GGContext {
-            gl,
-            egui_ctx,
-            rhai_engine: &mut self.rhai_engine,
-            rhai_ast: &self.rhai_ast,
-            audio_manager: &mut self.audio_manager,
-            dt,
-            assets: &mut GAssets::default(),
-        };
-        self.assets.lock().unwrap().poll(&mut gctx);
+        self.assets.lock().unwrap().poll(crate::PollContext { egui_ctx: &egui_ctx });
 
         match self.state {
             GGEngineState::Preinit => {
@@ -205,16 +196,7 @@ impl GGEngine {
                 self.state = GGEngineState::Postinit;
             }
             GGEngineState::Postinit => {
-                let mut gctx = GGContext {
-                    gl,
-                    egui_ctx,
-                    rhai_engine: &mut self.rhai_engine,
-                    rhai_ast: &self.rhai_ast,
-                    audio_manager: &mut self.audio_manager,
-                    dt,
-                    assets: &mut GAssets::default(),
-                };
-                self.assets.lock().unwrap().poll(&mut gctx);
+                self.assets.lock().unwrap().poll(crate::PollContext { egui_ctx: &egui_ctx });
 
                 self.app.lock().unwrap().update(crate::Update {
                     egui_ctx,

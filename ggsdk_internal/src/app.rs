@@ -1,5 +1,5 @@
 use eframe::{egui, egui_glow, glow};
-use crate::{GAssets, GGContext};
+use crate::GAssets;
 
 pub struct InitContext<'a> {
     pub assets: &'a mut GAssets,

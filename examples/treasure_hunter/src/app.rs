@@ -1,5 +1,5 @@
 use ggsdk::{
-    egui::{self, Align2, Button, Color32, CornerRadius, FontId, LayerId, Margin, Rect, RichText}, kira, tiled, GGApp, GGAtlas, GGContext, GGPainter, Update
+    egui::{self, Align2, Button, Color32, CornerRadius, FontId, LayerId, Margin, Rect, RichText}, kira, tiled, GGApp, GGAtlas, GGPainter, Update
 };
 use kira::sound::static_sound::StaticSoundData;
 use std::{cell::RefCell, rc::Rc};
@@ -311,7 +311,7 @@ impl TreasureHunter {
 }
 
 impl GGApp for TreasureHunter {
-    fn init(&mut self, mut g: ggsdk::InitContext) {
+    fn init(&mut self, g: ggsdk::InitContext) {
         let font = FontId::monospace(32.0);
         self.font = font;
         let font = FontId::monospace(16.0);

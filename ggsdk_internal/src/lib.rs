@@ -9,9 +9,6 @@ pub use matchbox_socket;
 
 pub use glam;
 
-mod context;
-pub use context::*;
-
 mod engine;
 pub use engine::*;
 
