@@ -1,7 +1,13 @@
-use std::sync::{Arc, Mutex};
+use std::{
+    ops::{Deref, DerefMut},
+    sync::{Arc, Mutex},
+};
 
 use crate::{GAssets, GGApp, GGContext, GGRunOptions, InitContext};
-use eframe::{egui::{self, Align2, Color32, FontId, LayerId}, glow};
+use eframe::{
+    egui::{self, Align2, Color32, FontId, LayerId},
+    egui_glow, glow,
+};
 use kira::AudioManager;
 use web_time::Instant;
 
@@ -13,23 +19,48 @@ pub enum GGEngineState {
 }
 
 pub struct GGEngine {
-    pub(crate) assets: GAssets,
+    pub(crate) assets: ArcSendMutex<GAssets>,
     pub(crate) rhai_engine: rhai::Engine,
     pub(crate) rhai_ast: rhai::AST,
     pub(crate) audio_manager: AudioManager,
     pub(crate) iterations: u64,
-    pub(crate) app: Arc<Mutex<dyn GGApp>>,
+    pub(crate) app: ArcSendMutex<dyn GGApp>,
     pub(crate) last_update: Instant,
     pub(crate) state: GGEngineState,
+}
+
+pub struct ArcSendMutex<T: ?Sized>(Arc<Mutex<T>>);
+impl<T> ArcSendMutex<T> {
+    pub fn new(t: T) -> Self {
+        Self(Arc::new(Mutex::new(t)))
+    }
+}
+impl<T: ?Sized> Clone for ArcSendMutex<T> {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+unsafe impl<T: ?Sized> Send for ArcSendMutex<T> {}
+unsafe impl<T: ?Sized> Sync for ArcSendMutex<T> {}
+impl<T: ?Sized> Deref for ArcSendMutex<T> {
+    type Target = Arc<Mutex<T>>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl<T: ?Sized> DerefMut for ArcSendMutex<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 impl GGEngine {
     fn new<T: GGApp + 'static>(app: T) -> Self {
         let rhai_engine = rhai::Engine::new();
         let mut engine = Self {
-            assets: GAssets::default(),
+            assets: ArcSendMutex::new(GAssets::default()),
             last_update: Instant::now(),
-            app: Arc::new(Mutex::new(app)),
+            app: ArcSendMutex(Arc::new(Mutex::new(app))),
             iterations: 0,
             rhai_engine,
             rhai_ast: Default::default(),
@@ -90,7 +121,7 @@ impl GGEngine {
 
         tracing::debug!("hello world");
 
-        use eframe::{wasm_bindgen::JsCast as _, App};
+        use eframe::{App, wasm_bindgen::JsCast as _};
         wasm_bindgen_futures::spawn_local(async move {
             let document = web_sys::window()
                 .expect("No window")
@@ -117,7 +148,7 @@ impl GGEngine {
         });
     }
 
-    pub fn update(&mut self, egui_ctx: &egui::Context, gl:&glow::Context) {
+    pub fn update(&mut self, egui_ctx: &egui::Context, gl: &glow::Context) {
         let now = web_time::Instant::now();
         let dt = now - self.last_update;
         let dt = dt.as_secs_f32();
@@ -131,7 +162,7 @@ impl GGEngine {
             dt,
             assets: &mut GAssets::default(),
         };
-        self.assets.poll(&mut gctx);
+        self.assets.lock().unwrap().poll(&mut gctx);
 
         match self.state {
             GGEngineState::Preinit => {
@@ -168,7 +199,7 @@ impl GGEngine {
             }
             GGEngineState::Init => {
                 let mut gctx = InitContext {
-                    assets: &mut self.assets,
+                    assets: &mut self.assets.lock().unwrap(),
                     gl,
                 };
                 self.app.lock().unwrap().init(&mut gctx);
@@ -184,7 +215,7 @@ impl GGEngine {
                     dt,
                     assets: &mut GAssets::default(),
                 };
-                self.assets.poll(&mut gctx);
+                self.assets.lock().unwrap().poll(&mut gctx);
 
                 let mut gctx = GGContext {
                     gl,
@@ -193,9 +224,32 @@ impl GGEngine {
                     rhai_ast: &self.rhai_ast,
                     audio_manager: &mut self.audio_manager,
                     dt,
-                    assets: &mut self.assets,
+                    assets: &mut self.assets.lock().unwrap(),
                 };
                 self.app.lock().unwrap().update(&mut gctx);
+
+                /*self.app.lock().unwrap().paint_glow(crate::PaintGlow {
+                    dt,
+                    assets: &mut self.assets,
+                    painter: ,
+                });*/
+
+                let screen_rect = egui_ctx.screen_rect();
+                let app = self.app.clone();
+                let assets = self.assets.clone();
+                let callback = egui::PaintCallback {
+                    rect: screen_rect,
+                    callback: std::sync::Arc::new(egui_glow::CallbackFn::new(
+                        move |_info, painter| {
+                            app.lock().unwrap().paint_glow(crate::PaintGlow {
+                                dt,
+                                assets: &mut assets.lock().unwrap(),
+                                painter: painter,
+                            });
+                        },
+                    )),
+                };
+                egui_ctx.layer_painter(LayerId::background()).add(callback);
             }
         }
 
