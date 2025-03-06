@@ -16,12 +16,12 @@ struct State {
 }
 
 struct App {
-    state:Arc<RwLock<Option<State>>>
+    state:Option<State>
 }
 impl Default for App {
     fn default() -> Self {
         Self {
-            state:Arc::new(RwLock::new(None))
+            state:None
         }
     }
 }
@@ -112,7 +112,7 @@ impl ggsdk::GGApp for App {
 
             let vertex_array = gl.create_vertex_array().expect("failed to create");
 
-            *self.state.write().unwrap() = Some(State {
+            self.state = Some(State {
                 vertex_array,
                 program,
                 angle:0.0
@@ -125,35 +125,28 @@ impl ggsdk::GGApp for App {
             return;
         }
 
+        self.state.as_mut().unwrap().angle += g.dt;
+    }
+
+    fn paint_glow(&mut self, g:ggsdk::PaintGlow) {
+        if g.assets.pending() != 0 {
+            return;
+        }
         let smilie_atlas = g.assets.get::<GGAtlas>("smilie").unwrap().texture_id();
-        
-        let screen_rect = g.egui_ctx.screen_rect();
-        let state = self.state.clone();
-        let callback = egui::PaintCallback {
-            rect: screen_rect,
-            callback: std::sync::Arc::new(ggsdk::egui_glow::CallbackFn::new(move |_info, painter| {
-                let gl = painter.gl();
-                let state = state.read().unwrap();
-                let state = state.as_ref().unwrap();
-                unsafe { 
-                    let texture = painter.texture(smilie_atlas).unwrap();
-                    gl.use_program(Some(state.program.clone())); 
-                    gl.bind_texture(glow::TEXTURE_2D, Some(texture));
-                    gl.uniform_1_f32(
-                        gl.get_uniform_location(state.program, "u_angle").as_ref(),
-                        state.angle,
-                    );
-                    gl.bind_vertex_array(Some(state.vertex_array));
-                    gl.draw_arrays(glow::TRIANGLES, 0, 6);
-                };
-            })),
+        let painter = g.painter;
+        let state = self.state.as_mut().unwrap();
+        let gl = g.painter.gl();
+        unsafe { 
+            let texture = painter.texture(smilie_atlas).unwrap();
+            gl.use_program(Some(state.program.clone())); 
+            gl.bind_texture(glow::TEXTURE_2D, Some(texture));
+            gl.uniform_1_f32(
+                gl.get_uniform_location(state.program, "u_angle").as_ref(),
+                state.angle,
+            );
+            gl.bind_vertex_array(Some(state.vertex_array));
+            gl.draw_arrays(glow::TRIANGLES, 0, 6);
         };
-        let mut state = self.state.write().unwrap();
-        let state = state.as_mut().unwrap();
-        state.angle += g.dt;
-        g.egui_ctx
-            .layer_painter(LayerId::background())
-            .add(callback);
     }
 }
 
