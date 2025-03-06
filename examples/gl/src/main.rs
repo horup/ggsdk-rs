@@ -1,9 +1,4 @@
-use std::sync::Arc;
-use std::sync::RwLock;
 
-use ggsdk::egui;
-use ggsdk::egui::LayerId;
-use ggsdk::egui::TextureHandle;
 use ggsdk::glow;
 use ggsdk::glow::HasContext as _;
 use ggsdk::GGAtlas;
