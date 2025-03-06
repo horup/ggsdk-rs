@@ -1,5 +1,5 @@
 use ggsdk::{
-    egui::{self, Align2, Button, Color32, CornerRadius, FontId, LayerId, Margin, Rect, RichText}, kira, tiled, GGApp, GGAtlas, GGPainter, Update
+    egui::{self, Align2, Button, Color32, CornerRadius, FontId, LayerId, Margin, Rect, RichText}, kira, tiled, GGApp, GGAtlas, GGPainter, UpdateContext
 };
 use kira::sound::static_sound::StaticSoundData;
 use std::{cell::RefCell, rc::Rc};
@@ -18,13 +18,13 @@ pub struct TreasureHunter {
 }
 
 impl TreasureHunter {
-    pub fn initialize(&mut self, g: &mut Update) {
+    pub fn initialize(&mut self, g: &mut UpdateContext) {
         if !self.initialized && g.assets.pending() == 0 {
             self.initialized = true;
         }
     }
 
-    pub fn process_game_input(&mut self, g: &mut Update) {
+    pub fn process_game_input(&mut self, g: &mut UpdateContext) {
         let ctx = g.egui_ctx;
         ctx.input(|input| {
             if input.key_pressed(egui::Key::Escape) {
@@ -125,7 +125,7 @@ impl TreasureHunter {
         self.state.borrow_mut().actions.push(Box::new(intent));
     }
 
-    fn process_actions(&mut self, g: &mut Update) {
+    fn process_actions(&mut self, g: &mut UpdateContext) {
         let mut ctx = ActionContext {
             state: &mut self.state.borrow_mut(),
             new_actions: Vec::default(),
@@ -140,7 +140,7 @@ impl TreasureHunter {
         }
     }
 
-    fn play_sounds(&mut self, g: &mut Update) {
+    fn play_sounds(&mut self, g: &mut UpdateContext) {
         for sound in self.state.borrow_mut().play_sound.drain(..) {
             let Some(sound) = g.assets.get::<StaticSoundData>(&sound) else {
                 continue;
@@ -149,7 +149,7 @@ impl TreasureHunter {
         }
     }
 
-    fn draw_game(&self, g: &mut Update) {
+    fn draw_game(&self, g: &mut UpdateContext) {
         let painter = g.egui_ctx.layer_painter(LayerId::background());
         let rect = painter.clip_rect();
 
@@ -250,7 +250,7 @@ impl TreasureHunter {
       
     }
 
-    pub fn update_ui(&mut self, g: &mut Update) {
+    pub fn update_ui(&mut self, g: &mut UpdateContext) {
         let show_menu = self.state.borrow().show_menu;
         self.process_game_input(g);
         self.process_actions(g);
@@ -329,7 +329,7 @@ impl GGApp for TreasureHunter {
         state.current_level = ggsdk::persist::load::<String>("current_level").unwrap_or_default();
     }
 
-    fn update(&mut self, mut g: ggsdk::Update) {
+    fn update(&mut self, mut g: ggsdk::UpdateContext) {
         self.initialize(&mut g); 
         self.update_ui(&mut g);
     }

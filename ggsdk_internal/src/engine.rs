@@ -198,7 +198,7 @@ impl GGEngine {
             GGEngineState::Postinit => {
                 self.assets.lock().unwrap().poll(crate::PollContext { egui_ctx: &egui_ctx });
 
-                self.app.lock().unwrap().update(crate::Update {
+                self.app.lock().unwrap().update(crate::UpdateContext {
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
@@ -214,7 +214,7 @@ impl GGEngine {
                     rect: screen_rect,
                     callback: std::sync::Arc::new(egui_glow::CallbackFn::new(
                         move |_info, painter| {
-                            app.lock().unwrap().paint_glow(crate::PaintGlow {
+                            app.lock().unwrap().paint_glow(crate::PaintGlowContext {
                                 dt,
                                 assets: &mut assets.lock().unwrap(),
                                 painter: painter,

@@ -1,5 +1,5 @@
 
-use ggsdk::{glow, InitContext, Update};
+use ggsdk::{glow, InitContext, UpdateContext};
 use ggsdk::glow::HasContext as _;
 use ggsdk::GGAtlas;
 
@@ -115,7 +115,7 @@ impl ggsdk::GGApp for App {
         }
     }
 
-    fn update(&mut self, g: Update) {
+    fn update(&mut self, g: UpdateContext) {
         if g.assets.pending() != 0 {
             return;
         }
@@ -123,7 +123,7 @@ impl ggsdk::GGApp for App {
         self.state.as_mut().unwrap().angle += g.dt;
     }
 
-    fn paint_glow(&mut self, g:ggsdk::PaintGlow) {
+    fn paint_glow(&mut self, g:ggsdk::PaintGlowContext) {
         if g.assets.pending() != 0 {
             return;
         }
