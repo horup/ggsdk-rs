@@ -1,5 +1,5 @@
 
-use ggsdk::glow;
+use ggsdk::{glow, InitContext, Update};
 use ggsdk::glow::HasContext as _;
 use ggsdk::GGAtlas;
 
@@ -22,7 +22,7 @@ impl Default for App {
 }
 
 impl ggsdk::GGApp for App {
-    fn init(&mut self, g: &mut ggsdk::InitContext) {
+    fn init(&mut self, g: InitContext) {
 
         g.assets.load::<GGAtlas>("smilie_1x1.png", "smilie");
         let shader_version = if cfg!(target_arch = "wasm32") {
@@ -115,7 +115,7 @@ impl ggsdk::GGApp for App {
         }
     }
 
-    fn update(&mut self, g: &mut ggsdk::GGContext) {
+    fn update(&mut self, g: Update) {
         if g.assets.pending() != 0 {
             return;
         }

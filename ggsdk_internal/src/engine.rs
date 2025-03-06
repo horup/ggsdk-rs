@@ -198,11 +198,10 @@ impl GGEngine {
                 });
             }
             GGEngineState::Init => {
-                let mut gctx = InitContext {
+                self.app.lock().unwrap().init(InitContext {
                     assets: &mut self.assets.lock().unwrap(),
                     gl,
-                };
-                self.app.lock().unwrap().init(&mut gctx);
+                });
                 self.state = GGEngineState::Postinit;
             }
             GGEngineState::Postinit => {
@@ -217,22 +216,14 @@ impl GGEngine {
                 };
                 self.assets.lock().unwrap().poll(&mut gctx);
 
-                let mut gctx = GGContext {
-                    gl,
+                self.app.lock().unwrap().update(crate::Update {
                     egui_ctx,
                     rhai_engine: &mut self.rhai_engine,
                     rhai_ast: &self.rhai_ast,
                     audio_manager: &mut self.audio_manager,
                     dt,
                     assets: &mut self.assets.lock().unwrap(),
-                };
-                self.app.lock().unwrap().update(&mut gctx);
-
-                /*self.app.lock().unwrap().paint_glow(crate::PaintGlow {
-                    dt,
-                    assets: &mut self.assets,
-                    painter: ,
-                });*/
+                });
 
                 let screen_rect = egui_ctx.screen_rect();
                 let app = self.app.clone();
