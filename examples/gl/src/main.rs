@@ -1,5 +1,6 @@
 
-use ggsdk::{glow, InitContext, UpdateContext};
+use ggsdk::egui::{Align2, Color32, FontId, Id, LayerId, Pos2};
+use ggsdk::{egui, glow, InitContext, UpdateContext};
 use ggsdk::glow::HasContext as _;
 use ggsdk::GGAtlas;
 
@@ -11,11 +12,13 @@ struct State {
 }
 
 struct App {
-    state:Option<State>
+    state:Option<State>,
+    iterations:u64
 }
 impl Default for App {
     fn default() -> Self {
         Self {
+            iterations:0,
             state:None
         }
     }
@@ -116,11 +119,23 @@ impl ggsdk::GGApp for App {
     }
 
     fn update(&mut self, g: UpdateContext) {
+        self.iterations += 1;
         if g.assets.pending() != 0 {
             return;
         }
+       
+        egui::Window::new("Controls").show(g.egui_ctx, |ui|{
+            if ui.button("Left").is_pointer_button_down_on() {
+                self.state.as_mut().unwrap().angle -= g.dt;
+            }
+            if ui.button("Right").is_pointer_button_down_on() {
+                self.state.as_mut().unwrap().angle += g.dt;
+            }
+        });
 
-        self.state.as_mut().unwrap().angle += g.dt;
+
+        let painter = g.egui_ctx.layer_painter(LayerId::new(egui::Order::Background, Id::new("painter")));
+        painter.text(Pos2::new(16.0, 16.0), Align2::LEFT_CENTER, "GL Example", FontId::default(), Color32::WHITE);
     }
 
     fn paint_glow(&mut self, g:ggsdk::PaintGlowContext) {
