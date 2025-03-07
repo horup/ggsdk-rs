@@ -1,9 +1,14 @@
 [workspace]
 members = ["ggsdk_internal", "ggsdk_dynamic", "examples/treasure_hunter", "examples/gl"]
+package.version = "0.1.5"
+
+[workspace.dependencies]
+ggsdk_internal = { path = "ggsdk_internal", version = "0.1.5"}
+ggsdk_dynamic = { path = "ggsdk_dynamic", version = "0.1.5"}
 
 [package]
 name = "ggsdk"
-version = "0.1.5"
+version.workspace = true
 edition = "2021"
 description = "A crate that exports several types related to game development"
 license = "MIT OR Apache-2.0"
@@ -16,5 +21,5 @@ crate-type = ["lib"]
 dynamic = ["ggsdk_dynamic"]
 
 [dependencies]
-ggsdk_internal = { path = "ggsdk_internal", version = "0.1.5"}
-ggsdk_dynamic = { path = "ggsdk_dynamic", optional = true, version = "0.1.5"}
+ggsdk_internal.workspace = true
+ggsdk_dynamic = { workspace = true, optional = true}
