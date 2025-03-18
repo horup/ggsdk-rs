@@ -1,10 +1,10 @@
 [workspace]
 members = ["ggsdk_internal", "ggsdk_dynamic", "examples/treasure_hunter", "examples/gl"]
-package.version = "0.1.5"
+package.version = "0.1.6"
 
 [workspace.dependencies]
-ggsdk_internal = { path = "ggsdk_internal", version = "0.1.5"}
-ggsdk_dynamic = { path = "ggsdk_dynamic", version = "0.1.5"}
+ggsdk_internal = { path = "ggsdk_internal", version = "0.1.6"}
+ggsdk_dynamic = { path = "ggsdk_dynamic", version = "0.1.6"}
 
 [package]
 name = "ggsdk"

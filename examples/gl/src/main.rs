@@ -148,6 +148,7 @@ impl ggsdk::GGApp for App {
         let gl = g.painter.gl();
         unsafe { 
             let texture = painter.texture(smilie_atlas).unwrap();
+            gl.enable(glow::FRAMEBUFFER_SRGB);
             gl.use_program(Some(state.program.clone())); 
             gl.bind_texture(glow::TEXTURE_2D, Some(texture));
             gl.uniform_1_f32(
@@ -156,6 +157,7 @@ impl ggsdk::GGApp for App {
             );
             gl.bind_vertex_array(Some(state.vertex_array));
             gl.draw_arrays(glow::TRIANGLES, 0, 6);
+            gl.disable(glow::FRAMEBUFFER_SRGB);
         };
     }
 }
