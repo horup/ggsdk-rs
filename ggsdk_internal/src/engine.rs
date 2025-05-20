@@ -151,6 +151,7 @@ impl GGEngine {
     pub fn update(&mut self, egui_ctx: &egui::Context, gl: &glow::Context) {
         let now = web_time::Instant::now();
         let dt = now - self.last_update;
+        self.last_update = now;
         let dt = dt.as_secs_f32();
 
         self.assets.lock().unwrap().poll(crate::PollContext { egui_ctx: &egui_ctx });
@@ -228,7 +229,6 @@ impl GGEngine {
 
         self.iterations += 1;
         egui_ctx.request_repaint();
-        self.last_update = Instant::now();
     }
 
     pub fn load_script(&self, _path: &str) {}
