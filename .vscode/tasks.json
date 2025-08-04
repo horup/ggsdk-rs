@@ -7,7 +7,10 @@
 				"cwd": "examples/treasure_hunter"
 			},
 			"command": "run",
-			"args": ["--features", "ggsdk/dynamic"],
+			"args": [
+				"--features",
+				"ggsdk/dynamic"
+			],
 			"problemMatcher": [
 				"$rustc"
 			],
@@ -19,11 +22,24 @@
 				"cwd": "examples/gl"
 			},
 			"command": "run",
-			"args": ["--features", "ggsdk/dynamic"],
+			"args": [
+				"--features",
+				"ggsdk/dynamic"
+			],
 			"problemMatcher": [
 				"$rustc"
 			],
 			"label": "rust: run example gl"
+		},
+		{
+			"type": "shell",
+			"command": [
+				"cargo publish -p ggsdk_internal &&",
+				"cargo publish -p ggsdk_dynamic --no-verify &&",
+				"cargo publish"
+			],
+			"label": "cargo: publish",
+			"problemMatcher": []
 		}
 	]
 }
