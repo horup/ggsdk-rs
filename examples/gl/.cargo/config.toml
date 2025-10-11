@@ -1,7 +1,7 @@
-[unstable]
-codegen-backend = true
+#[unstable]
+#codegen-backend = true
 
-[profile.dev]
+#[profile.dev]
 #codegen-backend = "cranelift"
 opt-level = 1
 debug = 0

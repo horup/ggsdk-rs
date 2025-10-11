@@ -1,5 +1,5 @@
-[unstable]
-codegen-backend = true
+#[unstable]
+#codegen-backend = true
 
 [profile.dev]
 #codegen-backend = "cranelift"
