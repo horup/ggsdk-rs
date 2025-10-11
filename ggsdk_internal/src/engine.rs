@@ -91,6 +91,7 @@ impl GGEngine {
         let size = options.window_initial_size.unwrap_or((640.0, 480.0));
         let eframe_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default().with_inner_size([size.0, size.1]),
+            depth_buffer:options.depth_buffer,
             window_builder: Some(Box::new(move |window| {
                 let mut window = window;
                 if let Some(initial_pos) = options.window_initial_pos {
