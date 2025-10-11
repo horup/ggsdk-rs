@@ -122,7 +122,7 @@ impl GGEngine {
 
         tracing::debug!("hello world");
 
-        use eframe::{App, wasm_bindgen::JsCast as _};
+        use eframe::{wasm_bindgen::JsCast as _};
         wasm_bindgen_futures::spawn_local(async move {
             let document = web_sys::window()
                 .expect("No window")
@@ -142,8 +142,11 @@ impl GGEngine {
 
             let engine = Self::new(game);
 
-            let web_options = eframe::WebOptions::default();
-            let start_result = eframe::WebRunner::new()
+            let web_options = eframe::WebOptions {
+                depth_buffer:options.depth_buffer,
+                ..Default::default()
+            };
+            let _ = eframe::WebRunner::new()
                 .start(canvas, web_options, Box::new(|__| Ok(Box::new(engine))))
                 .await;
         });
