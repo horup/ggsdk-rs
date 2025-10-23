@@ -124,6 +124,10 @@ impl ggsdk::GGApp for App {
             return;
         }
        
+
+        egui::panel::TopBottomPanel::top("top_panel").show(g.egui_ctx, |ui| {
+            ui.label(format!("Iterations: {}", self.iterations));
+        });
         egui::Window::new("Controls").show(g.egui_ctx, |ui|{
             if ui.button("Left").is_pointer_button_down_on() {
                 self.state.as_mut().unwrap().angle -= g.dt;
@@ -135,7 +139,7 @@ impl ggsdk::GGApp for App {
 
 
         let painter = g.egui_ctx.layer_painter(LayerId::new(egui::Order::Background, Id::new("painter")));
-        painter.text(Pos2::new(16.0, 16.0), Align2::LEFT_CENTER, "GL Example", FontId::default(), Color32::WHITE);
+        painter.text(Pos2::new(16.0, 24.0), Align2::LEFT_CENTER, "GL Example", FontId::default(), Color32::WHITE);
     }
 
     fn paint_glow(&mut self, g:ggsdk::PaintGlowContext) {

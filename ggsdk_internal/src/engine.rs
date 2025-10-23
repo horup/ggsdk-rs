@@ -91,7 +91,7 @@ impl GGEngine {
         let size = options.window_initial_size.unwrap_or((640.0, 480.0));
         let eframe_options = eframe::NativeOptions {
             viewport: egui::ViewportBuilder::default().with_inner_size([size.0, size.1]),
-            depth_buffer:options.depth_buffer,
+            depth_buffer: options.depth_buffer,
             window_builder: Some(Box::new(move |window| {
                 let mut window = window;
                 if let Some(initial_pos) = options.window_initial_pos {
@@ -122,7 +122,7 @@ impl GGEngine {
 
         tracing::debug!("hello world");
 
-        use eframe::{wasm_bindgen::JsCast as _};
+        use eframe::wasm_bindgen::JsCast as _;
         wasm_bindgen_futures::spawn_local(async move {
             let document = web_sys::window()
                 .expect("No window")
@@ -143,7 +143,7 @@ impl GGEngine {
             let engine = Self::new(game);
 
             let web_options = eframe::WebOptions {
-                depth_buffer:options.depth_buffer,
+                depth_buffer: options.depth_buffer,
                 ..Default::default()
             };
             let _ = eframe::WebRunner::new()
@@ -158,7 +158,9 @@ impl GGEngine {
         self.last_update = now;
         let dt = dt.as_secs_f32();
 
-        self.assets.lock().unwrap().poll(crate::PollContext { egui_ctx: &egui_ctx });
+        self.assets.lock().unwrap().poll(crate::PollContext {
+            egui_ctx: &egui_ctx,
+        });
 
         match self.state {
             GGEngineState::Preinit => {
@@ -201,15 +203,8 @@ impl GGEngine {
                 self.state = GGEngineState::Postinit;
             }
             GGEngineState::Postinit => {
-                self.assets.lock().unwrap().poll(crate::PollContext { egui_ctx: &egui_ctx });
-
-                self.app.lock().unwrap().update(crate::UpdateContext {
-                    egui_ctx,
-                    rhai_engine: &mut self.rhai_engine,
-                    rhai_ast: &self.rhai_ast,
-                    audio_manager: &mut self.audio_manager,
-                    dt,
-                    assets: &mut self.assets.lock().unwrap(),
+                self.assets.lock().unwrap().poll(crate::PollContext {
+                    egui_ctx: &egui_ctx,
                 });
 
                 let screen_rect = egui_ctx.screen_rect();
@@ -227,7 +222,26 @@ impl GGEngine {
                         },
                     )),
                 };
+
+                self.app.lock().unwrap().update_glow(crate::UpdateContext {
+                    egui_ctx,
+                    rhai_engine: &mut self.rhai_engine,
+                    rhai_ast: &self.rhai_ast,
+                    audio_manager: &mut self.audio_manager,
+                    dt,
+                    assets: &mut self.assets.lock().unwrap(),
+                });
+
                 egui_ctx.layer_painter(LayerId::background()).add(callback);
+
+                self.app.lock().unwrap().update(crate::UpdateContext {
+                    egui_ctx,
+                    rhai_engine: &mut self.rhai_engine,
+                    rhai_ast: &self.rhai_ast,
+                    audio_manager: &mut self.audio_manager,
+                    dt,
+                    assets: &mut self.assets.lock().unwrap(),
+                });
             }
         }
 
